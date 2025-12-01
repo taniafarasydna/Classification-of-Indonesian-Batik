@@ -92,6 +92,18 @@ div[data-testid="stFileUploader"] label {{
     font-size: 14px;
 }}
 
+.upload-title {{
+    font-family: 'Georgia', serif;
+    font-size: 22px;
+    font-weight: 600;    
+    text-align: center;
+    width: 100%;
+    margin-top: 20px;
+    margin-bottom: 5px;
+    display: block;
+}}
+
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -104,6 +116,7 @@ st.markdown("""
     <div class="header-title">Klasifikasi Citra Batik Indonesia</div>
 </div>
 """, unsafe_allow_html=True)
+st.markdown("<div class='upload-title'>Unggah Gambar Batik</div>", unsafe_allow_html=True)
 
 
 # ============================================
@@ -216,4 +229,5 @@ st.markdown("""
     </div>
 </div>
 """, unsafe_allow_html=True)
+
 
