@@ -113,6 +113,7 @@ st.markdown("""
     <div class="header-title">Klasifikasi Citra Batik Indonesia</div>
 </div>
 """, unsafe_allow_html=True)
+st.markdown("<div class='upload-title'>Unggah Gambar Batik</div>", unsafe_allow_html=True)
 
 
 # ============================================
@@ -225,3 +226,4 @@ st.markdown("""
     </div>
 </div>
 """, unsafe_allow_html=True)
+
