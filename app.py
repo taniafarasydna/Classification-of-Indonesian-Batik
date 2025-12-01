@@ -4,9 +4,18 @@ import numpy as np
 from PIL import Image
 import base64
 
-# =========================
-# ICON CANTING (base64)
-# =========================
+# ============================================
+# MOTIF BATIK BACKGROUND (AMAN & TRANSPARAN)
+# ============================================
+batik_bg = """
+https://i.imgur.com/7sYzjNw.png
+"""  # motif halus krem-transparan
+
+
+
+# ============================================
+# ICON CANTING
+# ============================================
 canting_icon_base64 = """
 iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABKElEQVR4nM3Tv0oDQRDG8d8HcpA2
 QAU0r9AR2ggZgomwUjZCwAh2gn0CVpZwbgWJmbm5qTPGWx8o0lxxz5p7/M7Ox1YwAzwBUWiNUM6g
@@ -17,81 +26,69 @@ T5+7WfmT9Avq0uFnmnQZXFUTioM8O0JtVf5PmnmAAAAAElFTkSuQmCC
 """
 
 def canting_icon():
-    return f"<img src='data:image/png;base64,{canting_icon_base64}' width='30' style='margin-right:10px; margin-bottom:-5px;'/>"
+    return f"<img src='data:image/png;base64,{canting_icon_base64}' width='30' style='margin-right:10px; margin-bottom:-6px;'/>"
 
 
-# =========================
-# CUSTOM CSS
-# =========================
+# ============================================
+# CUSTOM CSS GLOBAL
+# ============================================
 st.markdown(f"""
 <style>
 
-/* Remove container padding so background can expand */
+/* FULL WIDTH Container */
 .block-container {{
-    padding-top: 0 !important;
-    padding-left: 0 !important;
-    padding-right: 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: 100% !important;
 }}
 
-html, body {{
-    margin: 0;
-    padding: 0;
-}}
-
-/* Background motif batik halus */
+/* MOTIF BATIK BACKGROUND */
 body {{
-    background-image: url("https://i.imgur.com/NF7yHqX.png");
-    background-size: 300px;
+    background-image: url('{batik_bg}');
+    background-size: 250px;
     background-repeat: repeat;
-    opacity: 0.98;
+    background-attachment: fixed;
 }}
 
-/* Header clean */
+/* HEADER */
 .header-container {{
     width: 100%;
-    padding: 40px 10px 20px 10px;
+    padding: 40px 10px 15px 10px;
     text-align: center;
-    background: rgba(255, 255, 255, 0.85);
+    background: rgba(255,255,255,0.92);
 }}
 
 .header-title {{
     font-family: 'Georgia', serif;
-    font-size: 36px;
+    font-size: 40px;
     font-weight: 700;
-    color: #2e2e2e;
-}}
-
-.header-subtitle {{
-    font-family: 'Georgia', serif;
-    font-size: 19px;
-    color: #555;
-    margin-top: 6px;
+    color: #2b2b2b;
 }}
 
 .section-title {{
     margin-top: 35px;
     text-align: center;
     font-family: 'Georgia', serif;
-    font-size: 20px;
+    font-size: 22px;
     font-weight: 600;
-    color: #333;
+    color: #3d3d3d;
 }}
 
-/* Upload box */
+/* UPLOAD BOX */
 div[data-testid="stFileUploader"] {{
     border: 2px dashed #b6b6b6 !important;
-    border-radius: 16px;
+    border-radius: 18px;
     padding: 40px 20px;
-    background-color: #ffffffd9;
+    background-color: #ffffffee;
     text-align: center;
-    max-width: 340px;
-    margin: 20px auto 8px auto;
+    max-width: 360px;
+    margin: 20px auto 0 auto;
 }}
 div[data-testid="stFileUploader"] label {{
     display: none !important;
 }}
 
-/* Prediction Box */
+/* PREDICTION BOX */
 .pred-box {{
     border-radius: 12px;
     padding: 20px;
@@ -99,7 +96,7 @@ div[data-testid="stFileUploader"] label {{
     border-left: 6px solid #8A5A44;
     box-shadow: 0 2px 10px rgba(0,0,0,0.08);
     max-width: 600px;
-    margin: 20px auto;
+    margin: 25px auto;
 }}
 
 .pred-label {{
@@ -108,32 +105,29 @@ div[data-testid="stFileUploader"] label {{
     color: #8A5A44;
 }}
 
-/* Footer soft brown */
+/* FOOTER COKLAT SOFT */
 .footer {{
     width: 100%;
-    background: #D8C4B0;
-    padding: 18px 0;
+    background: #CBA35C;
+    padding: 20px 0;
     text-align: center;
     position: fixed;
     bottom: 0;
     left: 0;
-
-    font-family: 'Georgia', serif;
 }}
 
 .footer-text {{
-    color: #4a3a2a;
+    font-family: 'Georgia', serif;
+    color: #3b2e1e;
     font-size: 14px;
-    line-height: 1.5;
 }}
-
 </style>
 """, unsafe_allow_html=True)
 
 
-# =========================
-# HEADER
-# =========================
+# ============================================
+# HEADER CONTENT
+# ============================================
 st.markdown(f"""
 <div class="header-container">
     <div class="header-title">
@@ -143,9 +137,9 @@ st.markdown(f"""
 """, unsafe_allow_html=True)
 
 
-# =========================
+# ============================================
 # LOAD MODEL
-# =========================
+# ============================================
 @st.cache_resource
 def load_model():
     return tf.keras.models.load_model("model_batik.h5")
@@ -161,45 +155,45 @@ labels = [
 ]
 
 
-# =========================
-# UPLOAD SECTION TITLE
-# =========================
+# ============================================
+# SECTION TITLE
+# ============================================
 st.markdown("<div class='section-title'>Unggah Gambar Batik</div>", unsafe_allow_html=True)
 
 
-# =========================
+# ============================================
 # FILE UPLOADER
-# =========================
+# ============================================
 uploaded_file = st.file_uploader("", type=["jpg", "png", "jpeg"])
 
 
-# =========================
+# ============================================
 # PREDICTION
-# =========================
+# ============================================
 if uploaded_file:
     img = Image.open(uploaded_file).convert("RGB")
-    st.image(img, caption="Gambar yang diunggah", use_column_width=True)
+    st.image(img, caption="", use_column_width=True)
 
-    img_resized = img.resize((224, 224))
-    img_array = np.array(img_resized) / 255.0
-    img_array = np.expand_dims(img_array, axis=0)
+    img = img.resize((224, 224))
+    img_arr = np.array(img) / 255.0
+    img_arr = np.expand_dims(img_arr, 0)
 
     with st.spinner("Sedang memproses..."):
-        pred = model.predict(img_array)
-        idx = np.argmax(pred)
-        name = labels[idx]
+        pred = model.predict(img_arr)
+        i = np.argmax(pred)
         conf = np.max(pred) * 100
 
     st.markdown('<div class="pred-box">', unsafe_allow_html=True)
     st.markdown('<div class="pred-label">Hasil Prediksi:</div>', unsafe_allow_html=True)
-    st.write(f"Jenis Batik: {name}")
+    st.write(f"Jenis Batik: {labels[i]}")
     st.write(f"Confidence: {conf:.2f}%")
     st.markdown('</div>', unsafe_allow_html=True)
 
 
-# =========================
+
+# ============================================
 # FOOTER
-# =========================
+# ============================================
 st.markdown("""
 <div class="footer">
     <div class="footer-text">
