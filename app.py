@@ -48,7 +48,7 @@ body {{
     display: none !important;
 }}
 
-/* HIDE STRANGE EMPTY BOXES */
+/* HIDE UPLOADER EMPTY BOXES */
 .css-1y4p8pa, .css-12ttj6m {{
     display: none !important;
 }}
@@ -142,7 +142,7 @@ labels = [
 
 
 # ============================================
-# UPLOADER LOGIC
+# UPLOAD LOGIC
 # ============================================
 if "uploaded" not in st.session_state:
     st.session_state.uploaded = None
@@ -163,6 +163,7 @@ else:
     img = Image.open(st.session_state.uploaded).convert("RGB")
     display_img = img.resize((260, 260))
 
+    # Preprocess for model
     arr = img.resize((224, 224))
     arr = np.array(arr) / 255.0
     arr = np.expand_dims(arr, 0)
@@ -176,7 +177,7 @@ else:
     # PERFECT CENTER LAYOUT
     col_spacer, col_img, col_pred = st.columns([0.8, 1, 1.2])
 
-    # LEFT — IMAGE
+    # LEFT — IMAGE CENTERED
     with col_img:
         st.markdown("<div style='display:flex; justify-content:center;'>", unsafe_allow_html=True)
         st.markdown("""
@@ -198,7 +199,7 @@ else:
         st.markdown(f"<div class='prediction-text'>Confidence: <b>{conf:.2f}%</b></div>", unsafe_allow_html=True)
         st.markdown("</div>", unsafe_allow_html=True)
 
-    # RESET BUTTON (center)
+    # RESET BUTTON (CENTER)
     st.markdown("<div class='reset-btn' style='text-align:center; margin-top:30px;'>", unsafe_allow_html=True)
     if st.button("Reset Gambar"):
         st.session_state.uploaded = None
