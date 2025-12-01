@@ -40,7 +40,7 @@ body {{
 
 .header-title {{
     font-family: 'Georgia', serif;
-    font-size: 40px;
+    font-size: 30px;
     font-weight: 700;
     color: #2b2b2b;
 }}
@@ -111,6 +111,7 @@ div[data-testid="stFileUploader"] label {{
 st.markdown("""
 <div class="header-container">
     <div class="header-title">Klasifikasi Citra Batik Indonesia</div>
+        <div class="header-title">Klasifikasi Citra Batik Indonesia</div>
 </div>
 """, unsafe_allow_html=True)
 
@@ -225,3 +226,4 @@ st.markdown("""
     </div>
 </div>
 """, unsafe_allow_html=True)
+
