@@ -105,7 +105,6 @@ div[data-testid="stFileUploader"] label {{
     font-family: 'Georgia', serif;
     font-size: 22px;
     font-weight: 600;
-    color: #8A5A44;
     text-align: center;
     width: 100%;
     margin-top: 20px;
@@ -238,6 +237,7 @@ st.markdown("""
     </div>
 </div>
 """, unsafe_allow_html=True)
+
 
 
 
