@@ -50,7 +50,7 @@ body {{
     margin-top: 35px;
     text-align: center;
     font-family: 'Georgia', serif;
-    font-size: 22px;
+    font-size: 18px;
     font-weight: 600;
     color: #3d3d3d;
 }}
@@ -186,3 +186,4 @@ st.markdown("""
     </div>
 </div>
 """, unsafe_allow_html=True)
+
