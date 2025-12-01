@@ -6,7 +6,7 @@ from PIL import Image
 # ============================================
 # MOTIF BATIK BACKGROUND
 # ============================================
-batik_bg = "https://i.imgur.com/7sYzjNw.png"   # motif batik halus warna krem
+batik_bg = "https://i.imgur.com/7sYzjNw.png"   # motif batik halus
 
 
 # ============================================
@@ -15,14 +15,12 @@ batik_bg = "https://i.imgur.com/7sYzjNw.png"   # motif batik halus warna krem
 st.markdown(f"""
 <style>
 
-/* FULL WIDTH CONTAINER */
 .block-container {{
     padding: 0 !important;
     margin: 0 !important;
     max-width: 100% !important;
 }}
 
-/* BACKGROUND BATIK */
 body {{
     background-image: url('{batik_bg}');
     background-size: 260px;
@@ -30,7 +28,6 @@ body {{
     background-attachment: fixed;
 }}
 
-/* HEADER */
 .header-container {{
     width: 100%;
     padding: 40px 10px 15px 10px;
@@ -54,7 +51,6 @@ body {{
     color: #3d3d3d;
 }}
 
-/* UPLOAD BOX */
 div[data-testid="stFileUploader"] {{
     border: 2px dashed #b6b6b6 !important;
     border-radius: 18px;
@@ -68,7 +64,6 @@ div[data-testid="stFileUploader"] label {{
     display: none !important;
 }}
 
-/* PREDICTION BOX */
 .pred-box {{
     border-radius: 12px;
     padding: 20px;
@@ -85,7 +80,6 @@ div[data-testid="stFileUploader"] label {{
     color: #8A5A44;
 }}
 
-/* FOOTER */
 .footer {{
     width: 100%;
     background: #CBA35C;
@@ -102,7 +96,6 @@ div[data-testid="stFileUploader"] label {{
     font-size: 14px;
 }}
 
-/* TOOLTIP */
 .tooltip {{
     position: relative;
     display: inline-block;
@@ -144,6 +137,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 
+
 # ============================================
 # LOAD MODEL
 # ============================================
@@ -168,25 +162,24 @@ labels = [
 st.markdown("<div class='section-title'>Unggah Gambar Batik</div>", unsafe_allow_html=True)
 
 
+
 # ============================================
-# FILE UPLOADER
+# UPLOAD LOGIC
 # ============================================
 if "uploaded" not in st.session_state:
     st.session_state.uploaded = None
 
 if st.session_state.uploaded is None:
+
     uploaded_file = st.file_uploader("", type=["jpg", "png", "jpeg"])
+
     if uploaded_file:
         st.session_state.uploaded = uploaded_file
-        st.experimental_rerun()
+        st.rerun()
+
 else:
-    # ======================================================
-    # AFTER UPLOAD → DISPLAY IMAGE + PREDICTION SIDE BY SIDE
-    # ======================================================
 
     img = Image.open(st.session_state.uploaded).convert("RGB")
-
-    # Display image (small + bordered)
     display_img = img.resize((250, 250))
 
     # Preprocess for model
@@ -194,7 +187,6 @@ else:
     arr = np.array(arr) / 255.0
     arr = np.expand_dims(arr, 0)
 
-    # Predict
     with st.spinner("Sedang memproses..."):
         pred = model.predict(arr)
         idx = np.argmax(pred)
@@ -204,7 +196,6 @@ else:
     # SIDE-BY-SIDE LAYOUT
     col1, col2 = st.columns([1, 1], gap="large")
 
-    # LEFT IMAGE WITH BORDER
     with col1:
         st.markdown("""
         <div style='
@@ -219,10 +210,8 @@ else:
 
         st.markdown("</div>", unsafe_allow_html=True)
 
-    # RIGHT PREDICTION BOX
     with col2:
         st.markdown('<div class="pred-box">', unsafe_allow_html=True)
-
         st.markdown("""
         <div class="tooltip">
             <span style="font-size:22px; font-weight:bold;">Hasil Prediksi</span>
@@ -235,15 +224,17 @@ else:
 
         st.write(f"Jenis Batik: **{predicted_label}**")
         st.write(f"Confidence: **{conf:.2f}%**")
-
         st.markdown("</div>", unsafe_allow_html=True)
 
-    # RESET BUTTON (center)
+    # RESET BUTTON
     st.markdown("<div style='text-align:center; margin-top:20px;'>", unsafe_allow_html=True)
+
     if st.button("Reset Gambar"):
         st.session_state.uploaded = None
-        st.experimental_rerun()
+        st.rerun()
+
     st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 # ============================================
