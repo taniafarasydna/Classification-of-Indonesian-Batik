@@ -102,6 +102,43 @@ div[data-testid="stFileUploader"] label {{
     color: #3b2e1e;
     font-size: 14px;
 }}
+
+/* BORDER GAMBAR */
+.preview-img {
+    border: 4px solid #8A5A44;       /* coklat batik */
+    border-radius: 12px;
+    box-shadow: 0px 3px 10px rgba(0,0,0,0.1);
+}
+
+/* TOOLTIP STYLE */
+.tooltip {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    color: #8A5A44;
+    font-weight: 600;
+}
+
+.tooltip .tooltiptext {
+    visibility: hidden;
+    width: 240px;
+    background-color: #fdf7ee;
+    color: #5a4a36;
+    text-align: center;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #d2b48c;
+
+    /* Position */
+    position: absolute;
+    z-index: 1;
+    top: -8px;
+    left: 110%;
+}
+
+.tooltip:hover .tooltiptext {
+    visibility: visible;
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -152,26 +189,71 @@ uploaded_file = st.file_uploader("", type=["jpg", "png", "jpeg"])
 
 
 # ============================================
-# PREDICTION
+# PREDICTION WITH BORDER, RESET BUTTON, TOOLTIP
 # ============================================
-if uploaded_file:
-    img = Image.open(uploaded_file).convert("RGB")
-    st.image(img, caption="", use_column_width=True)
+if "uploaded" not in st.session_state:
+    st.session_state.uploaded = None
 
-    img = img.resize((224, 224))
-    img_arr = np.array(img) / 255.0
+# Simpan file ke session
+if uploaded_file and st.session_state.uploaded is None:
+    st.session_state.uploaded = uploaded_file
+
+# Jika ada gambar
+if st.session_state.uploaded is not None:
+
+    img = Image.open(st.session_state.uploaded).convert("RGB")
+
+    # Resize image for display
+    display_img = img.resize((250, 250))
+
+    # Preprocess for model
+    img_resized = img.resize((224, 224))
+    img_arr = np.array(img_resized) / 255.0
     img_arr = np.expand_dims(img_arr, 0)
 
     with st.spinner("Sedang memproses..."):
         pred = model.predict(img_arr)
         idx = np.argmax(pred)
         conf = np.max(pred) * 100
+        predicted_label = labels[idx]
 
-    st.markdown('<div class="pred-box">', unsafe_allow_html=True)
-    st.markdown('<div class="pred-label">Hasil Prediksi:</div>', unsafe_allow_html=True)
-    st.write(f"Jenis Batik: {labels[idx]}")
-    st.write(f"Confidence: {conf:.2f}%")
-    st.markdown('</div>', unsafe_allow_html=True)
+    # 2 columns layout
+    col1, col2 = st.columns([1, 1], gap="large")
+
+    with col1:
+        st.image(display_img, caption="", use_column_width=False, output_format="PNG", 
+                 clamp=True, channels="RGB", 
+                 use_container_width=False)
+
+        # Border wrapper around image
+        st.markdown(
+            "<div class='preview-img'></div>",
+            unsafe_allow_html=True
+        )
+
+    with col2:
+        st.markdown('<div class="pred-box">', unsafe_allow_html=True)
+
+        # Tooltip title
+        st.markdown("""
+        <div class="tooltip">
+            <span style="font-size:20px; font-weight:bold;">Hasil Prediksi</span>
+            <span class="tooltiptext">
+                Ini adalah hasil klasifikasi dari model MobileNetV2.
+                Confidence menunjukkan tingkat keyakinan model.
+            </span>
+        </div>
+        """, unsafe_allow_html=True)
+
+        st.write(f"Jenis Batik: **{predicted_label}**")
+        st.write(f"Confidence: **{conf:.2f}%**")
+
+        st.markdown('</div>', unsafe_allow_html=True)
+
+    # RESET BUTTON
+    if st.button("Reset Gambar"):
+        st.session_state.uploaded = None
+        st.experimental_rerun()
 
 
 
@@ -186,4 +268,5 @@ st.markdown("""
     </div>
 </div>
 """, unsafe_allow_html=True)
+
 
