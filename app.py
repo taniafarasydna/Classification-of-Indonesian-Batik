@@ -30,6 +30,12 @@ body {{
     background-attachment: fixed;
 }}
 
+/* Hapus elemen uploader yang tersisa (icon/lingkaran) */
+.css-1y4p8pa, .css-12ttj6m, .css-1emrehy, .css-1n76uvr, .css-1r6slb0 {
+    display: none !important;
+}
+
+
 /* HEADER */
 .header-container {{
     width: 100%;
@@ -225,3 +231,4 @@ st.markdown("""
     </div>
 </div>
 """, unsafe_allow_html=True)
+
