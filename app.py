@@ -15,12 +15,14 @@ batik_bg = "https://i.imgur.com/7sYzjNw.png"   # motif batik halus
 st.markdown(f"""
 <style>
 
+/* FULL WIDTH */
 .block-container {{
     padding: 0 !important;
     margin: 0 !important;
     max-width: 100% !important;
 }}
 
+/* BACKGROUND */
 body {{
     background-image: url('{batik_bg}');
     background-size: 260px;
@@ -28,6 +30,7 @@ body {{
     background-attachment: fixed;
 }}
 
+/* HEADER */
 .header-container {{
     width: 100%;
     padding: 40px 10px 15px 10px;
@@ -51,6 +54,7 @@ body {{
     color: #3d3d3d;
 }}
 
+/* UPLOADER */
 div[data-testid="stFileUploader"] {{
     border: 2px dashed #b6b6b6 !important;
     border-radius: 18px;
@@ -64,22 +68,39 @@ div[data-testid="stFileUploader"] label {{
     display: none !important;
 }}
 
-.pred-box {{
-    border-radius: 12px;
-    padding: 20px;
-    background-color: #ffffffee;
-    border-left: 6px solid #8A5A44;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-    max-width: 600px;
-    margin: 15px auto;
+/* CARD HASIL PREDIKSI */
+.prediction-card {{
+    background: #ffffff;
+    border: 2px solid #d7c2a8;
+    border-radius: 14px;
+    padding: 20px 25px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    max-width: 450px;
 }}
 
-.pred-label {{
-    font-size: 20px;
+.prediction-title {{
+    font-size: 22px;
     font-weight: bold;
     color: #8A5A44;
+    margin-bottom: 10px;
+    font-family: 'Georgia', serif;
 }}
 
+.prediction-text {{
+    font-size: 16px;
+    color: #3c2f27;
+    margin-top: 6px;
+    font-family: 'Georgia', serif;
+}}
+
+/* Gambar lebih ke tengah */
+.image-wrapper {{
+    display: flex;
+    justify-content: center;
+    margin-left: 80px;
+}}
+
+/* FOOTER */
 .footer {{
     width: 100%;
     background: #CBA35C;
@@ -91,11 +112,12 @@ div[data-testid="stFileUploader"] label {{
 }}
 
 .footer-text {{
-    font-family: 'Georgia', serif;
+    font-family: 'Georgia', serif';
     color: #3b2e1e;
     font-size: 14px;
 }}
 
+/* TOOLTIP */
 .tooltip {{
     position: relative;
     display: inline-block;
@@ -137,7 +159,6 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 
-
 # ============================================
 # LOAD MODEL
 # ============================================
@@ -157,20 +178,18 @@ labels = [
 
 
 # ============================================
-# UPLOAD SECTION TITLE
+# UPLOAD TITLE
 # ============================================
 st.markdown("<div class='section-title'>Unggah Gambar Batik</div>", unsafe_allow_html=True)
 
 
-
 # ============================================
-# UPLOAD LOGIC
+# UPLOADER
 # ============================================
 if "uploaded" not in st.session_state:
     st.session_state.uploaded = None
 
 if st.session_state.uploaded is None:
-
     uploaded_file = st.file_uploader("", type=["jpg", "png", "jpeg"])
 
     if uploaded_file:
@@ -178,6 +197,9 @@ if st.session_state.uploaded is None:
         st.rerun()
 
 else:
+    # ============================================
+    # DISPLAY + PREDICTION
+    # ============================================
 
     img = Image.open(st.session_state.uploaded).convert("RGB")
     display_img = img.resize((250, 250))
@@ -193,10 +215,12 @@ else:
         conf = np.max(pred) * 100
         predicted_label = labels[idx]
 
-    # SIDE-BY-SIDE LAYOUT
     col1, col2 = st.columns([1, 1], gap="large")
 
+    # Gambar kiri
     with col1:
+        st.markdown("<div class='image-wrapper'>", unsafe_allow_html=True)
+
         st.markdown("""
         <div style='
             border: 4px solid #8A5A44;
@@ -208,33 +232,31 @@ else:
 
         st.image(display_img, use_column_width=False)
 
-        st.markdown("</div>", unsafe_allow_html=True)
+        st.markdown("</div></div>", unsafe_allow_html=True)
 
+    # Hasil prediksi kanan
     with col2:
-        st.markdown('<div class="pred-box">', unsafe_allow_html=True)
-        st.markdown("""
-        <div class="tooltip">
-            <span style="font-size:22px; font-weight:bold;">Hasil Prediksi</span>
-            <span class="tooltiptext">
-                Ini adalah hasil klasifikasi dari model MobileNetV2.
-                Confidence menunjukkan tingkat keyakinan model.
-            </span>
-        </div>
-        """, unsafe_allow_html=True)
+        st.markdown("<div class='prediction-card'>", unsafe_allow_html=True)
+        st.markdown("<div class='prediction-title'>Hasil Prediksi</div>", unsafe_allow_html=True)
 
-        st.write(f"Jenis Batik: **{predicted_label}**")
-        st.write(f"Confidence: **{conf:.2f}%**")
+        st.markdown(
+            f"<div class='prediction-text'>Jenis Batik: <b>{predicted_label}</b></div>",
+            unsafe_allow_html=True
+        )
+
+        st.markdown(
+            f"<div class='prediction-text'>Confidence: <b>{conf:.2f}%</b></div>",
+            unsafe_allow_html=True
+        )
+
         st.markdown("</div>", unsafe_allow_html=True)
 
-    # RESET BUTTON
+    # Reset button
     st.markdown("<div style='text-align:center; margin-top:20px;'>", unsafe_allow_html=True)
-
     if st.button("Reset Gambar"):
         st.session_state.uploaded = None
         st.rerun()
-
     st.markdown("</div>", unsafe_allow_html=True)
-
 
 
 # ============================================
