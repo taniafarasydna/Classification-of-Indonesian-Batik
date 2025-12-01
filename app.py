@@ -4,10 +4,9 @@ import numpy as np
 from PIL import Image
 
 # ============================================
-# MOTIF BATIK BACKGROUND (AMAN & TRANSPARAN)
+# BACKGROUND MOTIF BATIK
 # ============================================
-batik_bg = "https://i.imgur.com/7sYzjNw.png"   # motif batik halus warna krem
-
+batik_bg = "https://i.imgur.com/7sYzjNw.png"   # motif batik halus
 
 
 # ============================================
@@ -16,14 +15,14 @@ batik_bg = "https://i.imgur.com/7sYzjNw.png"   # motif batik halus warna krem
 st.markdown(f"""
 <style>
 
-/* FULL WIDTH CONTAINER */
+/* FULL WIDTH */
 .block-container {{
     padding: 0 !important;
     margin: 0 !important;
     max-width: 100% !important;
 }}
 
-/* BACKGROUND MOTIF BATIK */
+/* BACKGROUND */
 body {{
     background-image: url('{batik_bg}');
     background-size: 260px;
@@ -46,16 +45,7 @@ body {{
     color: #2b2b2b;
 }}
 
-.section-title {{
-    margin-top: 35px;
-    text-align: center;
-    font-family: 'Georgia', serif;
-    font-size: 22px;
-    font-weight: 600;
-    color: #3d3d3d;
-}}
-
-/* UPLOAD BOX */
+/* UPLOADER */
 div[data-testid="stFileUploader"] {{
     border: 2px dashed #b6b6b6 !important;
     border-radius: 18px;
@@ -63,30 +53,38 @@ div[data-testid="stFileUploader"] {{
     background-color: #ffffffee;
     text-align: center;
     max-width: 360px;
-    margin: 20px auto 0 auto;
+    margin: 25px auto 0 auto;
 }}
 div[data-testid="stFileUploader"] label {{
     display: none !important;
 }}
 
-/* PREDICTION BOX */
-.pred-box {{
-    border-radius: 12px;
-    padding: 20px;
-    background-color: #ffffffee;
-    border-left: 6px solid #8A5A44;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.08);
-    max-width: 600px;
-    margin: 25px auto;
+/* PREDICTION CARD */
+.prediction-card {{
+    background: #ffffff;
+    border: 2px solid #d7c2a8;
+    border-radius: 14px;
+    padding: 20px 26px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    max-width: 450px;
 }}
 
-.pred-label {{
-    font-size: 20px;
+.prediction-title {{
+    font-size: 22px;
     font-weight: bold;
     color: #8A5A44;
+    margin-bottom: 10px;
+    font-family: 'Georgia', serif;
 }}
 
-/* FOOTER COKLAT SOFT */
+.prediction-text {{
+    font-size: 16px;
+    color: #3c2f27;
+    margin-top: 6px;
+    font-family: 'Georgia', serif;
+}}
+
+/* FOOTER */
 .footer {{
     width: 100%;
     background: #CBA35C;
@@ -102,9 +100,9 @@ div[data-testid="stFileUploader"] label {{
     color: #3b2e1e;
     font-size: 14px;
 }}
+
 </style>
 """, unsafe_allow_html=True)
-
 
 
 # ============================================
@@ -115,7 +113,6 @@ st.markdown("""
     <div class="header-title">Klasifikasi Citra Batik Indonesia</div>
 </div>
 """, unsafe_allow_html=True)
-
 
 
 # ============================================
@@ -136,43 +133,85 @@ labels = [
 ]
 
 
+# ============================================
+# UPLOADER LOGIC
+# ============================================
+if "uploaded" not in st.session_state:
+    st.session_state.uploaded = None
+
+# Before upload → show ONLY uploader
+if st.session_state.uploaded is None:
+    uploaded_file = st.file_uploader("", type=["jpg", "png", "jpeg"])
+    
+    if uploaded_file:
+        st.session_state.uploaded = uploaded_file
+        st.rerun()
+
 
 # ============================================
-# SECTION TITLE
+# AFTER UPLOAD
 # ============================================
-st.markdown("<div class='section-title'>Unggah Gambar Batik</div>", unsafe_allow_html=True)
+else:
+    img = Image.open(st.session_state.uploaded).convert("RGB")
+    display_img = img.resize((260, 260))
 
-
-
-# ============================================
-# FILE UPLOADER
-# ============================================
-uploaded_file = st.file_uploader("", type=["jpg", "png", "jpeg"])
-
-
-
-# ============================================
-# PREDICTION
-# ============================================
-if uploaded_file:
-    img = Image.open(uploaded_file).convert("RGB")
-    st.image(img, caption="", use_column_width=True)
-
-    img = img.resize((224, 224))
-    img_arr = np.array(img) / 255.0
-    img_arr = np.expand_dims(img_arr, 0)
+    # Preprocess for model
+    arr = img.resize((224, 224))
+    arr = np.array(arr) / 255.0
+    arr = np.expand_dims(arr, 0)
 
     with st.spinner("Sedang memproses..."):
-        pred = model.predict(img_arr)
+        pred = model.predict(arr)
         idx = np.argmax(pred)
         conf = np.max(pred) * 100
+        predicted_label = labels[idx]
 
-    st.markdown('<div class="pred-box">', unsafe_allow_html=True)
-    st.markdown('<div class="pred-label">Hasil Prediksi:</div>', unsafe_allow_html=True)
-    st.write(f"Jenis Batik: {labels[idx]}")
-    st.write(f"Confidence: {conf:.2f}%")
-    st.markdown('</div>', unsafe_allow_html=True)
+    # ============================================
+    # PERFECT CENTER LAYOUT (3 columns)
+    # ============================================
+    col_spacer, col_img, col_pred = st.columns([0.8, 1, 1.2])
 
+    # LEFT — IMAGE, centered
+    with col_img:
+        st.markdown("<div style='display:flex; justify-content:center;'>", unsafe_allow_html=True)
+
+        st.markdown("""
+        <div style='
+            border: 4px solid #8A5A44;
+            border-radius: 12px;
+            padding: 5px;
+            display: inline-block;
+        '>
+        """, unsafe_allow_html=True)
+
+        st.image(display_img, use_column_width=False)
+
+        st.markdown("</div></div>", unsafe_allow_html=True)
+
+    # RIGHT — PREDICTION CARD
+    with col_pred:
+        st.markdown("<div class='prediction-card'>", unsafe_allow_html=True)
+        st.markdown("<div class='prediction-title'>Hasil Prediksi</div>", unsafe_allow_html=True)
+
+        st.markdown(
+            f"<div class='prediction-text'>Jenis Batik: <b>{predicted_label}</b></div>",
+            unsafe_allow_html=True,
+        )
+        st.markdown(
+            f"<div class='prediction-text'>Confidence: <b>{conf:.2f}%</b></div>",
+            unsafe_allow_html=True,
+        )
+        st.markdown("</div>", unsafe_allow_html=True)
+
+    # RESET BUTTON (center)
+    st.write("")
+    st.markdown("<div style='text-align:center; margin-top:30px;'>", unsafe_allow_html=True)
+
+    if st.button("Reset Gambar"):
+        st.session_state.uploaded = None
+        st.rerun()
+
+    st.markdown("</div>", unsafe_allow_html=True)
 
 
 # ============================================
