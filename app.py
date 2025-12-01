@@ -12,6 +12,7 @@ batik_bg = "https://i.imgur.com/7sYzjNw.png"   # motif batik halus
 # ============================================
 # CUSTOM CSS
 # ============================================
+st.markdown(f"""
 <style>
 
 /* FULL WIDTH */
@@ -58,6 +59,15 @@ div[data-testid="stFileUploader"] label {{
     display: none !important;
 }}
 
+/* PREDICTION CARD */
+.prediction-card {{
+    background: #ffffff;
+    border: 2px solid #d7c2a8;
+    border-radius: 14px;
+    padding: 20px 26px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+    max-width: 450px;
+}}
 
 .prediction-title {{
     font-size: 22px;
@@ -215,6 +225,3 @@ st.markdown("""
     </div>
 </div>
 """, unsafe_allow_html=True)
-
-
-
