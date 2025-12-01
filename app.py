@@ -4,7 +4,7 @@ import numpy as np
 from PIL import Image
 
 # ============================================
-# MOTIF BATIK BACKGROUND
+# BACKGROUND MOTIF BATIK
 # ============================================
 batik_bg = "https://i.imgur.com/7sYzjNw.png"   # motif batik halus
 
@@ -45,15 +45,6 @@ body {{
     color: #2b2b2b;
 }}
 
-.section-title {{
-    margin-top: 35px;
-    text-align: center;
-    font-family: 'Georgia', serif;
-    font-size: 18px;
-    font-weight: 600;
-    color: #3d3d3d;
-}}
-
 /* UPLOADER */
 div[data-testid="stFileUploader"] {{
     border: 2px dashed #b6b6b6 !important;
@@ -62,18 +53,18 @@ div[data-testid="stFileUploader"] {{
     background-color: #ffffffee;
     text-align: center;
     max-width: 360px;
-    margin: 20px auto 0 auto;
+    margin: 25px auto 0 auto;
 }}
 div[data-testid="stFileUploader"] label {{
     display: none !important;
 }}
 
-/* CARD HASIL PREDIKSI */
+/* PREDICTION CARD */
 .prediction-card {{
     background: #ffffff;
     border: 2px solid #d7c2a8;
     border-radius: 14px;
-    padding: 20px 25px;
+    padding: 20px 26px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.08);
     max-width: 450px;
 }}
@@ -93,13 +84,6 @@ div[data-testid="stFileUploader"] label {{
     font-family: 'Georgia', serif;
 }}
 
-/* Gambar lebih ke tengah */
-.image-wrapper {{
-    display: flex;
-    justify-content: center;
-    margin-left: 300px;
-}}
-
 /* FOOTER */
 .footer {{
     width: 100%;
@@ -112,37 +96,9 @@ div[data-testid="stFileUploader"] label {{
 }}
 
 .footer-text {{
-    font-family: 'Georgia', serif';
+    font-family: 'Georgia', serif;
     color: #3b2e1e;
     font-size: 14px;
-}}
-
-/* TOOLTIP */
-.tooltip {{
-    position: relative;
-    display: inline-block;
-    cursor: pointer;
-    color: #8A5A44;
-    font-weight: 600;
-}}
-
-.tooltip .tooltiptext {{
-    visibility: hidden;
-    width: 240px;
-    background-color: #fdf7ee;
-    color: #5a4a36;
-    text-align: center;
-    padding: 10px;
-    border-radius: 8px;
-    border: 1px solid #d2b48c;
-    position: absolute;
-    z-index: 1;
-    top: -8px;
-    left: 110%;
-}}
-
-.tooltip:hover .tooltiptext {{
-    visibility: visible;
 }}
 
 </style>
@@ -178,31 +134,26 @@ labels = [
 
 
 # ============================================
-# UPLOAD TITLE
-# ============================================
-st.markdown("<div class='section-title'>Unggah Gambar Batik</div>", unsafe_allow_html=True)
-
-
-# ============================================
-# UPLOADER
+# UPLOADER LOGIC
 # ============================================
 if "uploaded" not in st.session_state:
     st.session_state.uploaded = None
 
+# Before upload → show ONLY uploader
 if st.session_state.uploaded is None:
     uploaded_file = st.file_uploader("", type=["jpg", "png", "jpeg"])
-
+    
     if uploaded_file:
         st.session_state.uploaded = uploaded_file
         st.rerun()
 
-else:
-    # ============================================
-    # DISPLAY + PREDICTION
-    # ============================================
 
+# ============================================
+# AFTER UPLOAD
+# ============================================
+else:
     img = Image.open(st.session_state.uploaded).convert("RGB")
-    display_img = img.resize((250, 250))
+    display_img = img.resize((260, 260))
 
     # Preprocess for model
     arr = img.resize((224, 224))
@@ -215,11 +166,14 @@ else:
         conf = np.max(pred) * 100
         predicted_label = labels[idx]
 
-    col1, col2 = st.columns([1, 1], gap="large")
+    # ============================================
+    # PERFECT CENTER LAYOUT (3 columns)
+    # ============================================
+    col_spacer, col_img, col_pred = st.columns([0.8, 1, 1.2])
 
-    # Gambar kiri
-    with col1:
-        st.markdown("<div class='image-wrapper'>", unsafe_allow_html=True)
+    # LEFT — IMAGE, centered
+    with col_img:
+        st.markdown("<div style='display:flex; justify-content:center;'>", unsafe_allow_html=True)
 
         st.markdown("""
         <div style='
@@ -234,28 +188,29 @@ else:
 
         st.markdown("</div></div>", unsafe_allow_html=True)
 
-    # Hasil prediksi kanan
-    with col2:
+    # RIGHT — PREDICTION CARD
+    with col_pred:
         st.markdown("<div class='prediction-card'>", unsafe_allow_html=True)
         st.markdown("<div class='prediction-title'>Hasil Prediksi</div>", unsafe_allow_html=True)
 
         st.markdown(
             f"<div class='prediction-text'>Jenis Batik: <b>{predicted_label}</b></div>",
-            unsafe_allow_html=True
+            unsafe_allow_html=True,
         )
-
         st.markdown(
             f"<div class='prediction-text'>Confidence: <b>{conf:.2f}%</b></div>",
-            unsafe_allow_html=True
+            unsafe_allow_html=True,
         )
-
         st.markdown("</div>", unsafe_allow_html=True)
 
-    # Reset button
-    st.markdown("<div style='text-align:center; margin-top:20px;'>", unsafe_allow_html=True)
+    # RESET BUTTON (center)
+    st.write("")
+    st.markdown("<div style='text-align:center; margin-top:30px;'>", unsafe_allow_html=True)
+
     if st.button("Reset Gambar"):
         st.session_state.uploaded = None
         st.rerun()
+
     st.markdown("</div>", unsafe_allow_html=True)
 
 
@@ -270,5 +225,3 @@ st.markdown("""
     </div>
 </div>
 """, unsafe_allow_html=True)
-
-
