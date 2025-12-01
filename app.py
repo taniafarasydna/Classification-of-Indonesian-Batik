@@ -97,7 +97,7 @@ div[data-testid="stFileUploader"] label {{
 .image-wrapper {{
     display: flex;
     justify-content: center;
-    margin-left: 80px;
+    margin-left: 100px;
 }}
 
 /* FOOTER */
@@ -270,3 +270,4 @@ st.markdown("""
     </div>
 </div>
 """, unsafe_allow_html=True)
+
