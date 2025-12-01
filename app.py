@@ -12,7 +12,6 @@ batik_bg = "https://i.imgur.com/7sYzjNw.png"   # motif batik halus
 # ============================================
 # CUSTOM CSS
 # ============================================
-st.markdown("<div class='section-title'>Unggah Gambar Batik</div>", unsafe_allow_html=True)
 <style>
 
 /* FULL WIDTH */
@@ -216,5 +215,6 @@ st.markdown("""
     </div>
 </div>
 """, unsafe_allow_html=True)
+
 
 
