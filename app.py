@@ -2,50 +2,31 @@ import streamlit as st
 import tensorflow as tf
 import numpy as np
 from PIL import Image
-import base64
 
 # ============================================
 # MOTIF BATIK BACKGROUND (AMAN & TRANSPARAN)
 # ============================================
-batik_bg = """
-https://i.imgur.com/7sYzjNw.png
-"""  # motif halus krem-transparan
+batik_bg = "https://i.imgur.com/7sYzjNw.png"   # motif batik halus warna krem
 
 
 
 # ============================================
-# ICON CANTING
-# ============================================
-canting_icon_base64 = """
-iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABKElEQVR4nM3Tv0oDQRDG8d8HcpA2
-QAU0r9AR2ggZgomwUjZCwAh2gn0CVpZwbgWJmbm5qTPGWx8o0lxxz5p7/M7Ox1YwAzwBUWiNUM6g
-ZyAu8ALuAGjAIhykQyf/UH1GXeV9N8w7vZPUuFz/27ziaqemYiqkM1hBxtRmDYqSTS3MpmN+gqnc
-5o41TXU87lN2GJ2nbaZ8gK3gO90u/QBD7sC6Go3d775lPXJLAjbjLCAHQI6v0NO6drt+3qcw3FgB
-zBvw7a8j9YRcErjSaILE6nyoj2XfYubKGm+7s7HjTp0NYB/gH32bRa7VrVKwB/wADa6zCzy5l7Qs
-T5+7WfmT9Avq0uFnmnQZXFUTioM8O0JtVf5PmnmAAAAAElFTkSuQmCC
-"""
-
-def canting_icon():
-    return f"<img src='data:image/png;base64,{canting_icon_base64}' width='30' style='margin-right:10px; margin-bottom:-6px;'/>"
-
-
-# ============================================
-# CUSTOM CSS GLOBAL
+# CUSTOM CSS
 # ============================================
 st.markdown(f"""
 <style>
 
-/* FULL WIDTH Container */
+/* FULL WIDTH CONTAINER */
 .block-container {{
     padding: 0 !important;
     margin: 0 !important;
     max-width: 100% !important;
 }}
 
-/* MOTIF BATIK BACKGROUND */
+/* BACKGROUND MOTIF BATIK */
 body {{
     background-image: url('{batik_bg}');
-    background-size: 250px;
+    background-size: 260px;
     background-repeat: repeat;
     background-attachment: fixed;
 }}
@@ -125,16 +106,16 @@ div[data-testid="stFileUploader"] label {{
 """, unsafe_allow_html=True)
 
 
+
 # ============================================
-# HEADER CONTENT
+# HEADER
 # ============================================
-st.markdown(f"""
+st.markdown("""
 <div class="header-container">
-    <div class="header-title">
-        {canting_icon()} Klasifikasi Citra Batik Indonesia
-    </div>
+    <div class="header-title">Klasifikasi Citra Batik Indonesia</div>
 </div>
 """, unsafe_allow_html=True)
+
 
 
 # ============================================
@@ -155,16 +136,19 @@ labels = [
 ]
 
 
+
 # ============================================
 # SECTION TITLE
 # ============================================
 st.markdown("<div class='section-title'>Unggah Gambar Batik</div>", unsafe_allow_html=True)
 
 
+
 # ============================================
 # FILE UPLOADER
 # ============================================
 uploaded_file = st.file_uploader("", type=["jpg", "png", "jpeg"])
+
 
 
 # ============================================
@@ -180,12 +164,12 @@ if uploaded_file:
 
     with st.spinner("Sedang memproses..."):
         pred = model.predict(img_arr)
-        i = np.argmax(pred)
+        idx = np.argmax(pred)
         conf = np.max(pred) * 100
 
     st.markdown('<div class="pred-box">', unsafe_allow_html=True)
     st.markdown('<div class="pred-label">Hasil Prediksi:</div>', unsafe_allow_html=True)
-    st.write(f"Jenis Batik: {labels[i]}")
+    st.write(f"Jenis Batik: {labels[idx]}")
     st.write(f"Confidence: {conf:.2f}%")
     st.markdown('</div>', unsafe_allow_html=True)
 
