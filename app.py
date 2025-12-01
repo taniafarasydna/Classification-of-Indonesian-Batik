@@ -2,8 +2,6 @@ import streamlit as st
 import tensorflow as tf
 import numpy as np
 from PIL import Image
-import base64
-from io import BytesIO
 
 # ============================================
 # MOTIF BATIK BACKGROUND
@@ -78,7 +76,7 @@ div[data-testid="stFileUploader"] label {{
     border-left: 6px solid #8A5A44;
     box-shadow: 0 2px 10px rgba(0,0,0,0.08);
     max-width: 600px;
-    margin: 25px auto;
+    margin: 15px auto;
 }}
 
 .pred-label {{
@@ -165,7 +163,7 @@ labels = [
 
 
 # ============================================
-# TITLE UPLOAD SECTION
+# UPLOAD SECTION TITLE
 # ============================================
 st.markdown("<div class='section-title'>Unggah Gambar Batik</div>", unsafe_allow_html=True)
 
@@ -173,23 +171,22 @@ st.markdown("<div class='section-title'>Unggah Gambar Batik</div>", unsafe_allow
 # ============================================
 # FILE UPLOADER
 # ============================================
-uploaded_file = st.file_uploader("", type=["jpg", "png", "jpeg"])
-
 if "uploaded" not in st.session_state:
     st.session_state.uploaded = None
 
-if uploaded_file and st.session_state.uploaded is None:
-    st.session_state.uploaded = uploaded_file
-
-
-# ============================================
-# PREDICTION (SIDE BY SIDE + BORDER + RESET + TOOLTIP)
-# ============================================
-if st.session_state.uploaded is not None:
+if st.session_state.uploaded is None:
+    uploaded_file = st.file_uploader("", type=["jpg", "png", "jpeg"])
+    if uploaded_file:
+        st.session_state.uploaded = uploaded_file
+        st.experimental_rerun()
+else:
+    # ======================================================
+    # AFTER UPLOAD → DISPLAY IMAGE + PREDICTION SIDE BY SIDE
+    # ======================================================
 
     img = Image.open(st.session_state.uploaded).convert("RGB")
 
-    # Resize image for display (not affecting model)
+    # Display image (small + bordered)
     display_img = img.resize((250, 250))
 
     # Preprocess for model
@@ -197,15 +194,17 @@ if st.session_state.uploaded is not None:
     arr = np.array(arr) / 255.0
     arr = np.expand_dims(arr, 0)
 
+    # Predict
     with st.spinner("Sedang memproses..."):
         pred = model.predict(arr)
         idx = np.argmax(pred)
         conf = np.max(pred) * 100
         predicted_label = labels[idx]
 
-    # Side-by-side layout
+    # SIDE-BY-SIDE LAYOUT
     col1, col2 = st.columns([1, 1], gap="large")
 
+    # LEFT IMAGE WITH BORDER
     with col1:
         st.markdown("""
         <div style='
@@ -220,12 +219,13 @@ if st.session_state.uploaded is not None:
 
         st.markdown("</div>", unsafe_allow_html=True)
 
+    # RIGHT PREDICTION BOX
     with col2:
         st.markdown('<div class="pred-box">', unsafe_allow_html=True)
 
         st.markdown("""
         <div class="tooltip">
-            <span style="font-size:20px; font-weight:bold;">Hasil Prediksi</span>
+            <span style="font-size:22px; font-weight:bold;">Hasil Prediksi</span>
             <span class="tooltiptext">
                 Ini adalah hasil klasifikasi dari model MobileNetV2.
                 Confidence menunjukkan tingkat keyakinan model.
@@ -238,10 +238,12 @@ if st.session_state.uploaded is not None:
 
         st.markdown("</div>", unsafe_allow_html=True)
 
-    # RESET BUTTON
+    # RESET BUTTON (center)
+    st.markdown("<div style='text-align:center; margin-top:20px;'>", unsafe_allow_html=True)
     if st.button("Reset Gambar"):
         st.session_state.uploaded = None
         st.experimental_rerun()
+    st.markdown("</div>", unsafe_allow_html=True)
 
 
 # ============================================
