@@ -1,7 +1,0 @@
-streamlit==1.31.1
-tensorflow==2.15.0
-numpy
-pandas
-matplotlib
-Pillow
-scikit-learn
