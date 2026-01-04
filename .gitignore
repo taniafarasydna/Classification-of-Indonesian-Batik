@@ -1,0 +1,16 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# Virtual env
+venv/
+.venv/
+
+# Model & file besar
+models/*.keras
+assets/eval/*.npy
+
+# OS
+.DS_Store
+Thumbs.db
