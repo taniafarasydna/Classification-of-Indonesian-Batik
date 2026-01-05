@@ -394,13 +394,6 @@ elif menu == "Klasifikasi":
                     "Confidence (%)": [conf_v2, conf_v3]
                 })
 
-                fig, ax = plt.subplots()
-                ax.bar(df["Model"], df["Confidence (%)"])
-                ax.set_ylim(0, 100)
-                ax.set_ylabel("Confidence (%)")
-                ax.set_title("Perbandingan Confidence")
-                st.pyplot(fig)
-
             st.markdown('</div>', unsafe_allow_html=True)
 
     else:
