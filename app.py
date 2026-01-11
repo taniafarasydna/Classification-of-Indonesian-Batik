@@ -14,7 +14,7 @@ from tensorflow.keras.applications.mobilenet_v3 import preprocess_input as prepr
 # ===============================
 st.set_page_config(
     page_title="Klasifikasi Batik | MobileNetV2 vs V3",
-    page_icon="🎨",
+    page_icon="",
     layout="wide"
 )
 
@@ -163,7 +163,7 @@ model_v2, model_v3 = load_models()
 # SIDEBAR
 # ===============================
 with st.sidebar:
-    st.title("🎨 Batik Classifier")
+    st.title("Batik Classifier")
     st.markdown("---")
     menu = st.radio(
         "Navigasi",
@@ -182,7 +182,7 @@ if menu == "Data Overview":
     import os
     from collections import Counter
 
-    st.markdown('<div class="big-title">📊 Data Overview Dataset Batik</div>', unsafe_allow_html=True)
+    st.markdown('<div class="big-title">Data Overview Dataset Batik</div>', unsafe_allow_html=True)
     st.markdown('<div class="sub-title">Source : https://www.kaggle.com/code/mpwolke/indonesian-batiks-cnn</div>', unsafe_allow_html=True)
     st.markdown("---")
 
@@ -234,17 +234,17 @@ if menu == "Data Overview":
     # ===============================
     col1, col2, col3, col4 = st.columns(4)
 
-    col1.metric("📁 Total Images", total_images)
-    col2.metric("🏷️ Total Classes", num_classes)
-    col3.metric("🧪 Train Images", train_count)
-    col4.metric("🧪 Test Images", test_count)
+    col1.metric("Total Images", total_images)
+    col2.metric("Total Classes", num_classes)
+    col3.metric("Train Images", train_count)
+    col4.metric("Test Images", test_count)
 
     st.markdown("---")
 
     # ===============================
     # DATASET STRUCTURE
     # ===============================
-    st.subheader("📂 Struktur Dataset")
+    st.subheader("Struktur Dataset")
 
     st.code(f"""
 DATASET/
@@ -258,7 +258,7 @@ DATASET/
     # ===============================
     # CONTOH GAMBAR PER KELAS
     # ===============================
-    st.subheader("🖼️ Contoh Gambar per Kelas")
+    st.subheader("Contoh Gambar per Kelas")
 
     cols = st.columns(5)
     for i, img_path in enumerate(sample_images):
@@ -274,7 +274,7 @@ DATASET/
     # ===============================
     # DISTRIBUSI GAMBAR PER KELAS
     # ===============================
-    st.subheader("📊 Distribusi Gambar per Kelas (TRAIN)")
+    st.subheader("Distribusi Gambar per Kelas (TRAIN)")
 
     class_counts = {
         c: len(os.listdir(os.path.join(TRAIN_PATH, c)))
@@ -294,7 +294,7 @@ DATASET/
     if sizes:
         widths, heights = zip(*sizes)
 
-        st.subheader("📐 Statistik Ukuran Gambar (Sample)")
+        st.subheader("Statistik Ukuran Gambar (Sample)")
 
         col_w, col_h = st.columns(2)
 
@@ -397,7 +397,7 @@ elif menu == "Klasifikasi":
             st.markdown('</div>', unsafe_allow_html=True)
 
     else:
-        st.info("⬆️ Upload gambar batik untuk melihat hasil prediksi")
+        st.info("Upload gambar batik untuk melihat hasil prediksi")
 
 elif menu == "Evaluasi Model":
 
@@ -450,7 +450,7 @@ elif menu == "Evaluasi Model":
     # ======================================================
     # HIGHLIGHT MODEL TERBAIK
     # ======================================================
-    st.markdown("### 🏆 Model Terbaik")
+    st.markdown("Model Terbaik")
     if acc_v3 > acc_v2:
         st.success("MobileNetV3 memiliki performa terbaik berdasarkan akurasi.")
     else:
@@ -591,14 +591,14 @@ elif menu == "Evaluasi Model":
 
     with col_w1:
         st.warning(
-            f"📉 **MobileNetV2**\n\n"
+            f"**MobileNetV2**\n\n"
             f"Kelas terlemah: **{class_names[weakest_v2_idx]}**\n\n"
             f"Akurasi: **{pca_v2[weakest_v2_idx]*100:.2f}%**"
         )
 
     with col_w2:
         st.warning(
-            f"📉 **MobileNetV3**\n\n"
+            f"**MobileNetV3**\n\n"
             f"Kelas terlemah: **{class_names[weakest_v3_idx]}**\n\n"
             f"Akurasi: **{pca_v3[weakest_v3_idx]*100:.2f}%**"
         )
